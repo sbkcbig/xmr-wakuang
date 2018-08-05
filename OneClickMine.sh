@@ -69,9 +69,9 @@ Set_xmr(){
     stty erase '^H' && read -p " 矿池是否需要 TLS/SSL, 默认n (y/n):" x_tls
     [[ -z ${x_tls} ]] && x_tls=n
     stty erase '^H' && read -p " 是否开启 Nicehash, 默认n (y/n):" x_nicehash
-    [[ -z ${x_tls} ]] && x_nicehash=n
+    [[ -z ${x_nicehash} ]] && x_nicehash=n
     stty erase '^H' && read -p " 是否开启 Multiple pools, 默认n (y/n):" x_multiple
-    [[ -z ${x_tls} ]] && x_multiple=n
+    [[ -z ${x_multiple} ]] && x_multiple=n
     x_text=" browser interface port: "${x_port}"\n Currency: "${x_currency}"\n Pool address: "${x_address}"\n Username: "${x_username}"\n Password: "${x_passwd}"\n Rig ID: "${x_id}"\n TLS/SSL: "${x_tls}"\n Nicehash: "${x_nicehash}"\n Multiple pools: "${x_multiple}
     clear
     echo -e "${sepa}\n${x_text}\n${sepa}"
