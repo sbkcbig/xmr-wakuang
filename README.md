@@ -7,3 +7,9 @@
 矿池是否需要 TLS/SSL, 默认n (y/n)
 是否开启 Nicehash, 默认n (y/n)
 是否开启 multiple pools, 默认n (y/n)
+
+```
+wget -N --no-check-certificate https://raw.githubusercontent.com/dovela/xmr-stak/master/OneClickMine.sh
+chmod +x OneClickMine.sh
+./OneClickMine.sh
+```

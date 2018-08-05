@@ -6,7 +6,7 @@ export PATH
 #=================================================
 #	System Required: CentOS 6+/Debian 6+/Ubuntu 14.04+/others(test)
 #	Description: Auto-install the ServerStatus Client
-#	Version: 0.1
+#	Version: 0.2
 #	Author: dovela
 #=================================================
 
@@ -72,7 +72,7 @@ Set_xmr(){
     [[ -z ${x_tls} ]] && x_nicehash=n
     stty erase '^H' && read -p " 是否开启 Multiple pools, 默认n (y/n):" x_multiple
     [[ -z ${x_tls} ]] && x_multiple=n
-    x_text=' browser interface port: '${x_port}\n' Currency: '${x_currency}\n' Pool address: '${x_address}\n' Username: '${x_username}\n' Password: '${x_passwd}\n' Rig ID: '${x_id}\n' TLS/SSL: '${x_tls}\n' Nicehash: '${x_nicehash}\n' Multiple pools: '${x_multiple}
+    x_text=" browser interface port: "${x_port}"\n Currency: "${x_currency}"\n Pool address: "${x_address}"\n Username: "${x_username}"\n Password: "${x_passwd}"\n Rig ID: "${x_id}"\n TLS/SSL: "${x_tls}"\n Nicehash: "${x_nicehash}"\n Multiple pools: "${x_multiple}
     clear
     echo -e "${sepa}\n${x_text}\n${sepa}"
     read -p "\n 确认无误后按 Enter 执行, 否则 Ctrl^c 取消" dovela
@@ -123,7 +123,7 @@ Install_xmr(){
     mkdir ${file}
     git clone https://github.com/dovela/xmr-stak.git ${file}
     cd ${file}
-    cmake ./ && make install
+    cmake ./ -DCUDA_ENABLE=OFF -DOpenCL_ENABLE=OFF && make install
     sysctl -w vm.nr_hugepages=128
     echo -e "soft memlock 262144\nhard memlock 262144" >> /etc/security/limits.conf
     screen -S xmr
@@ -166,7 +166,7 @@ Remove_xmr(){
 clear
 check_sys
 [ $(id -u) != "0" ] && echo -e "Error: You must be root to run this script" && exit 1
-echo -e " 出现问题请在 https://github.com/dovela/ServerStatus1Click 处提issue
+echo -e " 出现问题请在 https://github.com/dovela/xmr-stak 处提issue
 ${sepa}
   1.首次安装并启动 xmr-stak
   2.运行 xmr-stak
