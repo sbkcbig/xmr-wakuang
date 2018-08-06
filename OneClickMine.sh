@@ -116,29 +116,45 @@ Install_env(){
     echo ' 依赖环境安装完成, 请再次运行脚本'
 }
 
+screen_env_deploy(){
+    xmr_check=`screen -ls | grep xmr | awk '{print $1}' | head -n 1`
+    if [[ -n "${xmr_check}" ]]; then
+        screen -r ${xmr_check}
+        check_PID
+        [[ -n ${PID} ]] && echo ' xmr-stak 正在运行 !' && exit 1
+    else
+        screen -S xmr
+    fi
+}
+
 Install_xmr(){
     clear
     Set_xmr
     clear
+    screen_env_deploy
     mkdir ${file}
     git clone https://github.com/dovela/xmr-stak.git ${file}
     cd ${file}
     cmake ./ -DCUDA_ENABLE=OFF -DOpenCL_ENABLE=OFF && make install
     sysctl -w vm.nr_hugepages=128
     echo -e "soft memlock 262144\nhard memlock 262144" >> /etc/security/limits.conf
-    screen -S xmr
     cd ${file}/bin
+    /usr/bin/expect <<-EOF
     spawn ./xmr-stak
-    expect "port number" {send "${x_port}\n" }
-    expect "enter the currency" {send "${x_currency}\n" }
-    expect "Pool address" {send "${x_address}\n" }
-    expect "Username" {send "${x_username}\n" }
-    expect "Password" {send "${x_passwd}\n" }
-    expect "Rig identifier" {send "${x_id}\n" }
-    expect "TLS/SSL" {send "${x_tls}\n" }
-    expect "nicehash" {send "${x_nicehash}\n" }
-    expect "multiple pools" {send "${x_multiple}\n" }
+    expect "*port number" {send "${x_port}\r" }
+    expect "*enter the currency" {send "${x_currency}\r" }
+    expect "*Pool address" {send "${x_address}\r" }
+    expect "*Username" {send "${x_username}\r" }
+    expect "*Password" {send "${x_passwd}\r" }
+    expect "*Rig identifier" {send "${x_id}\r" }
+    expect "*TLS/SSL" {send "${x_tls}\r" }
+    expect "*nicehash" {send "${x_nicehash}\r" }
+    expect "*multiple pools" {send "${x_multiple}\r" }
+    interact
+    expect eof
+    EOF
     echo ' 配置完毕, xmr-stak 已启动...'
+    
 }
     
 Run_xmr(){
