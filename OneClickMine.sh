@@ -164,7 +164,7 @@ Install_xmr(){
     clear
     mkdir ${file}
     git clone https://github.com/dovela/xmr-stak.git ${file}
-    cd ${file}
+    cd ${file} && rm -rf OneClickMine.sh
     cmake ./ -DCUDA_ENABLE=OFF -DOpenCL_ENABLE=OFF && make install
     sysctl -w vm.nr_hugepages=128
     echo -e "soft memlock 262144\nhard memlock 262144" >> /etc/security/limits.conf
