@@ -40,21 +40,6 @@ check_PID(){
     PID=`ps -ef | grep -v grep | grep xmr-stak | awk '{print $2}'`
 }
 
-Install_Tcl(){
-    cd /tmp && wget https://prdownloads.sourceforge.net/tcl/tcl8.4.20-src.tar.gz && tar -zxvf tcl8.4.20-src.tar.gz
-    cd tcl8.4.20/unix
-    ./configure
-    make && make install
-}
-
-Install_expect(){
-    cd /tmp && wget https://jaist.dl.sourceforge.net/project/expect/Expect/5.45.4/expect5.45.4.tar.gz && tar -zxvf expect5.45.4.tar.gz
-    cd expect5.45.4
-    ./configure
-    make && make install
-    ln -s /usr/local/bin/expect /usr/bin/expect
-}
-
 set_http_port(){
     while true
     do
@@ -98,8 +83,8 @@ set_xmr(){
 
 Reset_xmr(){    
     set_xmr
-    cd ${file}/bin
-    rm -rf config.txt cpu.txt pools.txt
+    cd ${xmr_folder}
+    rm -rf ${xmr_conf} ${xmr_cpu} ${xmr_pools}
     nohup ./xmr-stak -i ${x_port} -o ${x_address} -u ${x_username} -r ${x_id} -p ${x_passwd} --currency ${x_currency} &>/dev/null &
     echo ' 重新配置完毕, xmr-stak 已启动...'
 }
@@ -121,15 +106,13 @@ View_conf(){
 
 centos_yum(){
 	yum install -y epel-release && yum clean all && yum update
-    yum install -y expect git wget libmicrohttpd-dev libssl-dev cmake build-essential libhwloc-dev screen wget
+    yum install -y git wget libmicrohttpd-dev libssl-dev cmake build-essential libhwloc-dev wget
 }
 
 debian_apt(){
     apt-get update
     apt-get upgrade -y
-    apt install -y libmicrohttpd-dev libssl-dev cmake build-essential libhwloc-dev git screen wget
-    Install_Tcl
-    Install_expect
+    apt install -y libmicrohttpd-dev libssl-dev cmake build-essential libhwloc-dev git wget
 }
 
 Install_env(){
@@ -139,18 +122,7 @@ Install_env(){
 	  else
 		debian_apt
 	fi
-    echo ' 依赖环境安装完成, 请再次运行脚本'
-}
-
-screen_env_deploy(){
-    xmr_check=`screen -ls | grep xmr | awk '{print $1}' | head -n 1`
-    if [[ -n "${xmr_check}" ]]; then
-        screen -r ${xmr_check}
-        check_PID
-        [[ -n ${PID} ]] && echo ' xmr-stak 正在运行 !' && exit 1
-    else
-        screen -S xmr
-    fi
+    echo ' 依赖环境安装完成!'
 }
 
 Install_xmr(){
@@ -159,6 +131,7 @@ Install_xmr(){
     else
         echo
     fi
+    Install_env
     clear
     set_xmr
     clear
@@ -168,7 +141,7 @@ Install_xmr(){
     cmake ./ -DCUDA_ENABLE=OFF -DOpenCL_ENABLE=OFF && make install
     sysctl -w vm.nr_hugepages=128
     echo -e "soft memlock 262144\nhard memlock 262144" >> /etc/security/limits.conf
-    cd ${file}/bin
+    cd ${xmr_folder}
     nohup ./xmr-stak -i ${x_port} -o ${x_address} -u ${x_username} -r ${x_id} -p ${x_passwd} --currency ${x_currency} &>/dev/null &
     echo ' 配置完毕, xmr-stak 已启动...'
 }
@@ -176,7 +149,7 @@ Install_xmr(){
 Run_xmr(){
     check_PID
     [[ -n ${PID} ]] && echo ' Error, xmr-stak 正在运行 !' && exit 1
-    cd ${file}/bin
+    cd ${xmr_folder}
     nohup ./xmr-stak &> /dev/null &
     check_PID
     [[ -n ${PID} ]] && echo ' xmr-stak 已启动 !'
@@ -201,7 +174,7 @@ check_sys
 [ $(id -u) != "0" ] && echo -e "Error: You must be root to run this script" && exit 1
 echo -e " 出现问题请在 https://github.com/dovela/xmr-stak 处提issue
 ${sepa}
-  1.首次安装并启动 xmr-stak
+  1.安装并启动 xmr-stak
   2.运行 xmr-stak  
   3.停止运行 xmr-stak
   4.卸载 xmr-stak
@@ -209,11 +182,10 @@ ${sepa}
   5.查看当前配置
   6.重新配置
 ${sepa}
-  7.首次安装linux依赖, 建议执行一次
-${sepa}
+
   输入数字开始，或ctrl + c退出
 "
-echo && stty erase '^H' && read -p " 请输入数字[1-7]:" num
+echo && stty erase '^H' && read -p " 请输入数字[1-6]:" num
  case "$num" in
     1)
     Install_xmr
@@ -233,10 +205,7 @@ echo && stty erase '^H' && read -p " 请输入数字[1-7]:" num
     6)
     Reset_xmr
     ;;
-    7)
-    Install_env
-    ;;
     *)
-    echo -e "Error, 请输入正确的数字 [1-7]!"
+    echo -e "Error, 请输入正确的数字 [1-6]!"
 	;;
 esac
