@@ -48,7 +48,6 @@ set_http_port(){
     expr ${x_port} + 0 &>/dev/null
     if [[ $? == 0 ]]; then
         if [[ ${x_port} -ge 0 ]] && [[ ${x_port} -le 65535 ]]; then
-            echo
             break
         else
             echo ' Error, 请输入正确的端口号 (0-65535) !'
@@ -182,7 +181,6 @@ ${sepa}
   5.查看当前配置
   6.重新配置
 ${sepa}
-
   输入数字开始，或ctrl + c退出
 "
 echo && stty erase '^H' && read -p " 请输入数字[1-6]:" num
