@@ -105,7 +105,7 @@ View_conf(){
 
 centos_yum(){
 	yum install -y epel-release && yum clean all && yum update
-    yum install -y git wget libmicrohttpd-dev libssl-dev cmake build-essential libhwloc-dev wget
+	yum install -y git wget libmicrohttpd-dev libssl-dev cmake build-essential libhwloc-dev wget
 }
 
 debian_apt(){
@@ -114,7 +114,7 @@ debian_apt(){
     apt install -y libmicrohttpd-dev libssl-dev cmake build-essential libhwloc-dev git wget
 }
 
-Install_env(){
+install_env(){
     check_sys
     if [[ ${release} == "centos" ]]; then
 		centos_yum
@@ -130,9 +130,9 @@ Install_xmr(){
     else
         echo
     fi
-    Install_env
-    clear
     set_xmr
+    clear
+    install_env
     clear
     mkdir ${file}
     git clone https://github.com/dovela/xmr-stak.git ${file}
