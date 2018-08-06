@@ -1,5 +1,5 @@
 #!/bin/bash
-#!/usr/bin/expect
+#!/usr/bin/expect -f
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
@@ -141,15 +141,17 @@ Install_xmr(){
     cd ${file}/bin
     /usr/bin/expect <<-EOF
     spawn ./xmr-stak
-    expect "*port number" {send "${x_port}\r" }
-    expect "*enter the currency" {send "${x_currency}\r" }
-    expect "*Pool address" {send "${x_address}\r" }
-    expect "*Username" {send "${x_username}\r" }
-    expect "*Password" {send "${x_passwd}\r" }
-    expect "*Rig identifier" {send "${x_id}\r" }
-    expect "*TLS/SSL" {send "${x_tls}\r" }
-    expect "*nicehash" {send "${x_nicehash}\r" }
-    expect "*multiple pools" {send "${x_multiple}\r" }
+    expect {
+    "port number" {send "${x_port}\r" }
+    "enter the currency" {send "${x_currency}\r" }
+    "Pool address" {send "${x_address}\r" }
+    "Username" {send "${x_username}\r" }
+    "Password" {send "${x_passwd}\r" }
+    "Rig identifier" {send "${x_id}\r" }
+    "TLS/SSL" {send "${x_tls}\r" }
+    "nicehash" {send "${x_nicehash}\r" }
+    "multiple pools" {send "${x_multiple}\r" }
+    }
     interact
     expect eof
     EOF
