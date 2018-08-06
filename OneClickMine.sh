@@ -6,7 +6,7 @@ export PATH
 #=================================================
 #	System Required: CentOS 6+/Debian 6+/Ubuntu 14.04+/others(test)
 #	Description: Auto-install the ServerStatus Client
-#	Version: 0.2
+#	Version: 1.0
 #	Author: dovela
 #=================================================
 
@@ -55,9 +55,27 @@ Install_expect(){
     ln -s /usr/local/bin/expect /usr/bin/expect
 }
 
-Set_xmr(){
-    stty erase '^H' && read -p " 矿机网页监视端口 Browser_interface_port, 默认10567 (22-65535):" x_port
+set_http_port(){
+    while true
+    do
+    stty erase '^H' && read -p " 矿机网页监视端口 Http_port, 0为不监控, 默认10567 (0-65535):" x_port
     [[ -z ${x_port} ]] && x_port=10567
+    expr ${x_port} + 0 &>/dev/null
+    if [[ $? == 0 ]]; then
+        if [[ ${x_port} -ge 0 ]] && [[ ${x_port} -le 65535 ]]; then
+            echo
+            break
+        else
+            echo ' Error, 请输入正确的端口号 (0-65535) !'
+        fi
+    else
+        echo ' Error, 请输入正确的端口号 (0-65535) !'
+    fi
+    done
+}
+
+set_xmr(){
+    set_http_port
     stty erase '^H' && read -p " 数字币名称 Currency (默认 monero7 ):" x_currency
     [[ -z ${x_currency} ]] && x_currency=monero7
     stty erase '^H' && read -p " 矿池地址 Pool_address (默认 pool.supportxmr.com:3333 ):" x_address
@@ -75,10 +93,18 @@ Set_xmr(){
     x_text=" browser interface port: "${x_port}"\n Currency: "${x_currency}"\n Pool address: "${x_address}"\n Username: "${x_username}"\n Password: "${x_passwd}"\n Rig ID: "${x_id}"\n TLS/SSL: "${x_tls}"\n Nicehash: "${x_nicehash}"\n Multiple pools: "${x_multiple}
     clear
     echo -e "${sepa}\n${x_text}\n${sepa}"
-    read -p "\n 确认无误后按 Enter 执行, 否则 Ctrl^c 取消" dovela
+    read -p " 确认无误后按 Enter 执行, 否则 Ctrl^c 取消" dovela
 }
 
-VIew_conf(){
+Reset_xmr(){    
+    set_xmr
+    cd ${file}/bin
+    rm -rf config.txt cpu.txt pools.txt
+    nohup ./xmr-stak -i ${x_port} -o ${x_address} -u ${x_username} -r ${x_id} -p ${x_passwd} --currency ${x_currency} &>/dev/null &
+    echo ' 重新配置完毕, xmr-stak 已启动...'
+}
+
+View_conf(){
     xmr_port=`cat ${xmr_conf} | grep httpd_port | awk '{print $3}' | tail -n 1 | sed 's/,/ /g'`
     xmr_text=`cat ${xmr_pools} | grep pool_address | tail -n 1 | sed -e 's/"/ /g;s/,/ /g'
     xmr_address=`echo ${xmr_text} | awk '{print $4}'`
@@ -128,10 +154,14 @@ screen_env_deploy(){
 }
 
 Install_xmr(){
+    if [[ -e ${file} ]]; then
+        echo -e " Error, 文件已存在于 ${file}, 请先查看或卸载 !" && exit 1
+    else
+        echo
+    fi
     clear
-    Set_xmr
+    set_xmr
     clear
-    screen_env_deploy
     mkdir ${file}
     git clone https://github.com/dovela/xmr-stak.git ${file}
     cd ${file}
@@ -139,30 +169,15 @@ Install_xmr(){
     sysctl -w vm.nr_hugepages=128
     echo -e "soft memlock 262144\nhard memlock 262144" >> /etc/security/limits.conf
     cd ${file}/bin
-    /usr/bin/expect <<-EOF
-    spawn ./xmr-stak
-    expect {
-    "port number" {send "${x_port}\r" }
-    "enter the currency" {send "${x_currency}\r" }
-    "Pool address" {send "${x_address}\r" }
-    "Username" {send "${x_username}\r" }
-    "Password" {send "${x_passwd}\r" }
-    "Rig identifier" {send "${x_id}\r" }
-    "TLS/SSL" {send "${x_tls}\r" }
-    "nicehash" {send "${x_nicehash}\r" }
-    "multiple pools" {send "${x_multiple}\r" }
-    }
-    interact
-    expect eof
-    EOF
+    nohup ./xmr-stak -i ${x_port} -o ${x_address} -u ${x_username} -r ${x_id} -p ${x_passwd} --currency ${x_currency} &>/dev/null &
     echo ' 配置完毕, xmr-stak 已启动...'
-    
 }
     
 Run_xmr(){
     check_PID
     [[ -n ${PID} ]] && echo ' Error, xmr-stak 正在运行 !' && exit 1
-    nohup .${file}/bin/xmr-stak &> /dev/null &
+    cd ${file}/bin
+    nohup ./xmr-stak &> /dev/null &
     check_PID
     [[ -n ${PID} ]] && echo ' xmr-stak 已启动 !'
 }
@@ -187,14 +202,18 @@ check_sys
 echo -e " 出现问题请在 https://github.com/dovela/xmr-stak 处提issue
 ${sepa}
   1.首次安装并启动 xmr-stak
-  2.运行 xmr-stak
+  2.运行 xmr-stak  
   3.停止运行 xmr-stak
-  4.首次安装linux依赖, 建议执行一次
-  5.卸载 xmr-stak
+  4.卸载 xmr-stak
+${sepa}
+  5.查看当前配置
+  6.重新配置
+${sepa}
+  7.首次安装linux依赖, 建议执行一次
 ${sepa}
   输入数字开始，或ctrl + c退出
 "
-echo && stty erase '^H' && read -p " 请输入数字[1-6]:" num
+echo && stty erase '^H' && read -p " 请输入数字[1-7]:" num
  case "$num" in
     1)
     Install_xmr
@@ -206,12 +225,18 @@ echo && stty erase '^H' && read -p " 请输入数字[1-6]:" num
     Stop_xmr
     ;;
     4)
-    Install_env
-    ;;
-    5)
     Remove_xmr
     ;;
+    5)
+    View_conf
+    ;;
+    6)
+    Reset_xmr
+    ;;
+    7)
+    Install_env
+    ;;
     *)
-    echo -e "Error, 请输入正确的数字 [1-6]!"
+    echo -e "Error, 请输入正确的数字 [1-7]!"
 	;;
 esac
