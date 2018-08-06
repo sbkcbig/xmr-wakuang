@@ -1,15 +1,17 @@
-矿机网页监视端口 Port, 默认10567 (22-65535)
-虚拟币名称 Currency (默认 monero7 )
-矿池地址 Pool address (默认 pool.supportxmr.com:3333 )
-钱包地址 Username (例: 49EJKgLMGCSFTEx5R7MTUPdhCrY8CjCiPMgLfRWcjh7eYf92f4FQ9PyCKDfBKNJ2EASBF9GB3yYeBKnVm4rGXhwG8ahAWdS ):" x_username
-矿池密码 Password (例: do1:10000@qq.com )
-矿机名称 Rig ID (例: do1 )
-矿池是否需要 TLS/SSL, 默认n (y/n)
-是否开启 Nicehash, 默认n (y/n)
-是否开启 multiple pools, 默认n (y/n)
+#一键挖矿脚本
+又造了个没用的轮子，一键挖矿，跟着步骤走就行了。
 
+#支持的系统
+Ubuntu18.04.1  Ubuntu16.04.5 实测通过
+<br>Centos7 和 Debian8 也做了适配，应该可行，未测试
+
+#使用方法
 ```
 wget -N --no-check-certificate https://raw.githubusercontent.com/dovela/xmr-stak/master/OneClickMine.sh
 chmod +x OneClickMine.sh
 ./OneClickMine.sh
 ```
+
+#感谢
+@Toyo https://github.com/ToyoDAdoubi
+<br>及许多贡献自己知识的博客
