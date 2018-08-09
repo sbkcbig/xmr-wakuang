@@ -1,4 +1,4 @@
-#!/bin/bash
+__ #!/bin/bash
 #!/usr/bin/expect -f
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
@@ -214,7 +214,7 @@ Limit_xmr(){
         [[ -z ${x_limit} ]] && echo ' 不限制 xmr-stak cpu占用率' && exit 1
         expr ${x_limit} + 0 &>/dev/null
         if [[ $? == 0 ]], then
-            if [[ x_limit -ge 1 ]] && [[ x_limit -le ${cpu_percentage_total} ]], then
+            if [[ ${x_limit} -ge 1 ]] && [[ ${x_limit} -le ${cpu_percentage_total} ]], then
             nohup cpulimit -p ${PID} -l ${x_limit} &>/dev/null &
             else
                 echo ' Error, 请输入正确的整数!'
