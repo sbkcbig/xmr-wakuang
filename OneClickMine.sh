@@ -212,7 +212,7 @@ Limit_xmr(){
         echo ' 限制 xmr-stak 占用cpu总百分比 (逻辑cpu数 * 100), 默认不限制'
         stty erase '^H' && read -p " 请输入[1-${cpu_percentage_total}]间的整数 (例: 50): " x_limit
         [[ -z ${x_limit} ]] && echo ' 不限制 xmr-stak cpu占用率' && exit 1
-        expr x_limit + 0 &>/dev/null
+        expr ${x_limit} + 0 &>/dev/null
         if [[ $? == 0 ]], then
             if [[ x_limit -ge 1 ]] && [[ x_limit -le ${cpu_percentage_total} ]], then
             nohup cpulimit -p ${PID} -l ${x_limit} &>/dev/null &
