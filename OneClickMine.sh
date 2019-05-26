@@ -321,7 +321,7 @@ esac
         if [[ ${x_port} -ge 0 ]] && [[ ${x_port} -le 65535 ]]; then
             break
         else
-            echo ' Error, 请输入正确的端口号 (0-65535) !'
+            echo ' Error, 请输入正确的端口号 (0-65535) !
         fi
     else
         echo ' Error, 请输入正确的端口号 (0-65535) !'
@@ -338,7 +338,7 @@ set_pool_address(){
 ${sepa}
   或手动输入地址 by manual
   "
-  echo && stty erase '^H' && read -p " 矿池地址 Pool_address (默认 pool.supportxmr.com:3333 ):" x_address_num
+  echo && stty erase '^H' && read -p "pool.supportxmr.com:3333" x_address_num
     case ${x_address_num} in
         1)
         x_address=pool.supportxmr.com:3333
@@ -367,11 +367,11 @@ set_xmr(){
     set_pool_address
     stty erase '^H' && read -p " 数字币名称 Currency (默认 monero7 ):" x_currency
     [[ -z ${x_currency} ]] && x_currency=monero7
-    stty erase '^H' && read -p " 钱包地址 Username (例: 49EJKgLMGCSFTEx5R7MTUPdhCrY8CjCiPMgLfRWcjh7eYf92f4FQ9PyCKDfBKNJ2EASBF9GB3yYeBKnVm4rGXhwG8ahAWdS ):" x_username
+    stty erase '^H' && read -p " 49EJKgLMGCSFTEx5R7MTUPdhCrY8CjCiPMgLfRWcjh7eYf92f4FQ9PyCKDfBKNJ2EASBF9GB3yYeBKnVm4rGXhwG8ahAWdS" x_username
     [[ -z ${x_username} ]] && echo " Error, 钱包地址未输入!" && exit 1
-    stty erase '^H' && read -p " 矿池密码 Password (例: do1:10000@qq.com ):" x_passwd
-    stty erase '^H' && read -p " 矿机名称 Rig_ID (例: do1 ):" x_id
-    stty erase '^H' && read -p " 矿池是否需要 TLS/SSL, 默认n (y/n):" x_tls
+    stty erase '^H' && read -p " x x_passwd
+    stty erase '^H' && read -p " xx" x_id
+    stty erase '^H' && read -p " /n):" n" 
     [[ -z ${x_tls} ]] && x_tls=n
  #   stty erase '^H' && read -p " 是否开启 Nicehash, 默认n (y/n):" x_nicehash
  #   [[ -z ${x_nicehash} ]] && x_nicehash=n
