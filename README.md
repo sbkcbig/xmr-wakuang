@@ -22,5 +22,5 @@ chmod +x OneClickMine.sh
 # 感谢
 @Toyo [https://github.com/ToyoDAdoubi](https://github.com/ToyoDAdoubi)
 <br>及许多贡献自己知识的博客
-<br>另：求求大矿场赏口饭吃吧，本人钱包49EJKgLMGCSFTEx5R7MTUPdhCrY8CjCiPMgLfRWcjh7eYf92f4FQ9PyCKDfBKNJ2EASBF9GB3yYeBKnVm4rGXhwG8ahAWdS
+<br>另：求求大矿场赏口饭吃吧，本人钱包4AggMSAnFrQbp2c6gb98BZDBydgmjNhhxdN4qBSjwc3BDNQZwg5hRqoNczXMr7Fz6ufbwVaJL8sJmTdrp2dbKYcFRY2pe33
 
